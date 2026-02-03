@@ -1,4 +1,4 @@
-# EvLogPyAI 🤖
+# EvLogPyAI 
 
 **Analisi Intelligente dei Log di Windows con AI**
 
@@ -10,9 +10,9 @@ EvLogPyAI è un'applicazione Windows che estrae automaticamente i log del Visual
 
 ---
 
-## ⚡ Avvio Rapido - 3 Comandi
+##  Avvio Rapido - 3 Comandi
 
-> 📖 **Guida dettagliata**: Vedi [QUICKSTART.md](QUICKSTART.md) per istruzioni passo-passo con screenshots
+>  **Guida dettagliata**: Vedi [QUICKSTART.md](QUICKSTART.md) per istruzioni passo-passo con screenshots
 
 **Per far funzionare tutto, esegui in ordine:**
 
@@ -30,14 +30,14 @@ EvLogPyAI è un'applicazione Windows che estrae automaticamente i log del Visual
 # Oppure: python trigger.py
 ```
 
-**🎯 Ordine di Esecuzione:**
+**Ordine di Esecuzione:**
 1. **start.ps1** → Avvia container Docker + scarica modello AI (~10 min prima volta)
 2. **N8N** → Importa e attiva workflow manualmente (vedi [n8n/workflows/README.md](n8n/workflows/README.md))
 3. **EvLogPyAI.exe** → Avvia l'applicazione principale
 
 ---
 
-## 📋 Caratteristiche
+## Caratteristiche
 
 ✅ **Interfaccia Grafica Moderna** - GUI intuitiva con CustomTkinter  
 ✅ **Estrazione Log Windows** - Accesso diretto al Visualizzatore Eventi  
@@ -48,7 +48,7 @@ EvLogPyAI è un'applicazione Windows che estrae automaticamente i log del Visual
 
 ---
 
-## 🚀 Installazione Completa
+## Installazione Completa
 
 ### Prerequisiti
 
@@ -107,7 +107,7 @@ python trigger.py
 
 ---
 
-## 📖 Utilizzo
+## Utilizzo
 
 ### 1. Avvia l'Applicazione
 
@@ -122,7 +122,7 @@ Doppio click su `EvLogPyAI.exe` o esegui `python trigger.py`
 
 ### 3. Estrai i Log
 
-Clicca su **"📥 Estrai Log"**. L'applicazione:
+Clicca su **"Estrai Log"**. L'applicazione:
 1. Legge i log dal Visualizzatore Eventi di Windows
 2. Salva un file `.txt` sul Desktop
 3. Avvia un server callback sulla porta 5050
@@ -143,8 +143,7 @@ Il browser si apre automaticamente con un report HTML contenente:
 - Soluzioni proposte
 
 ---
-
-## 🏗️ Architettura
+## Architettura
 
 ```
 ┌─────────────────┐
@@ -186,7 +185,7 @@ Il browser si apre automaticamente con un report HTML contenente:
 
 ---
 
-## 🛠️ Configurazione Avanzata
+## Configurazione Avanzata
 
 ### Cambio Porta Callback
 
@@ -218,7 +217,7 @@ timeout=300  # 300 secondi = 5 minuti
 
 ---
 
-## 📁 Struttura Progetto
+## Struttura Progetto
 
 ```
 EvLogPyAI/
@@ -239,61 +238,17 @@ EvLogPyAI/
 
 ---
 
-## 🔧 Troubleshooting
-
-### Errore "ECONNREFUSED" da N8N
-
-**Problema**: N8N non riesce a connettersi al callback server.
-
 **Soluzione**:
 1. Verifica che EvLogPyAI sia in esecuzione
 2. Verifica di aver cliccato "Estrai Log" (avvia il callback server)
 3. Controlla che l'URL in N8N sia: `={{ $('Webhook').item.json.callback_url }}`
 
-### Ollama Lento
-
-**Problema**: L'analisi richiede troppo tempo.
-
-**Soluzione**:
-- Usa un modello più piccolo (es. `ollama pull phi`)
-- Aumenta RAM allocata a Docker (Settings → Resources → Memory: 8GB)
-
-### Log Non Trovati
-
-**Problema**: "Nessun log trovato" dopo l'estrazione.
-
 **Soluzione**:
 - Esegui EvLogPyAI come **Amministratore** (tasto destro → "Esegui come amministratore")
 - I log di Security richiedono privilegi elevati
 
-## 📄 Licenza
-
-Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.
-
----
-
-## 👤 Autore
-
-**Il Tuo Nome**
+## Autore
 - GitHub: https://github.com/Zagmeher
 - Email: info@angeloiandolo.it
----
-
-## 🙏 Ringraziamenti
-
-- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - GUI moderna per Python
-- [Ollama](https://ollama.ai/) - Modelli AI locali
-- [N8N](https://n8n.io/) - Workflow automation
-- [PyWin32](https://github.com/mhammond/pywin32) - Accesso API Windows
-
----
-
-## 📊 Statistiche
-
-![Stars](https://img.shields.io/github/stars/tuousername/EvLogPyAI?style=social)
-![Forks](https://img.shields.io/github/forks/tuousername/EvLogPyAI?style=social)
-![Issues](https://img.shields.io/github/issues/tuousername/EvLogPyAI)
-
----
 
 **Fatto con ❤️ per semplificare l'analisi dei log di Windows**
