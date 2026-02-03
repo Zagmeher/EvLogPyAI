@@ -1,0 +1,155 @@
+{
+  "name": "evlogpyai",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evlogpyai",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3728,
+        -1424
+      ],
+      "id": "44f40195-204f-4e38-81d2-bbe863293bbd",
+      "name": "Webhook",
+      "webhookId": "2ec09ba9-cd30-4e60-b82e-ccd25102d7f5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sei un analizzatore esperto di logs di Windows.\nLa risposta che darai dovrà essere lunga, completa, esaustiva, precisa, senza cose come \"potrebbero\" o ipotesi infondate. Dare possibili soluzioni per risolvere al meglio la richiesta.\nComprendi e usa {{ $json.body.title }} e {{ $json.body.description }} per capire il problema ed esegui esclusivamente le azioni richieste per risolvere {{ $json.body.description }}.\n\nAnalizza tutti i {{ $json.body.logs }} e, sulla base della richiesta in descrizione, rispondere efficacemente come descritto sopra.\n\nPer ogni evento che darai in risposta, ordinala con: source, event_id, message e la risposta per ogni singolo evento.\n\nTu non dovrai eseguire azioni operative per l'utente ma solo consulenziali. Frasi come \"posso eseguire azioni\" oppure \"chiedimi altro\" o ancora \"posso fare\" non le voglio vedere.\nIl tuo obiettivo è solo ed esclusivamente analizzare la richiesta {{ $json.body.description }} e fornire le informazioni per risolvere la richiesta. Non sei tu a farlo, è l'utente che userà quel che dici per poter capire come risolvere. Dai tutte le istruzioni necessarie in modo facilmente comprensibile.\nAlla fine del messaggio, non fare domande all'utente su ulteriore supporto o altro.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -3408,
+        -1424
+      ],
+      "id": "27956bba-2d76-4706-b5fc-1219718aac2c",
+      "name": "AI Agent",
+      "notes": "Instruction working set."
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -3472,
+        -1200
+      ],
+      "id": "98e52eb0-9b36-4529-b6f5-f577d661e96a",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "uRUwEoX7S2yL4vzk",
+          "name": "Ollama"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=={{ $json.sessionId }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -3232,
+        -1200
+      ],
+      "id": "67c82e1c-10ad-4fc2-aaf7-5138df7d0c4d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:5050/callback",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "output",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2944,
+        -1424
+      ],
+      "id": "f270b9cd-38b8-42b0-94c3-1ce1f0b3f63d",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a93af84d-00ba-42ae-846f-5cfeaa5438c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "23ed996ac930b1b6a4e3325ce36e2acd9e75a694a58a3bf70967b76dc6ff2c19"
+  },
+  "id": "CB8N3vLZs1QWIbv3AqDFT",
+  "tags": []
+}

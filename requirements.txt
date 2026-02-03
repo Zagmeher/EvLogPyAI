@@ -1,0 +1,17 @@
+# EvLogPyAI - Dipendenze Python
+
+# GUI moderna con CustomTkinter
+customtkinter==5.2.1
+
+# Accesso ai log eventi di Windows
+pywin32==306
+
+# Richieste HTTP per webhook N8N
+requests==2.31.0
+
+# Pillow per creazione icona applicazione
+Pillow==10.2.0
+
+# PyInstaller per creare eseguibile (opzionale - solo per build)
+pyinstaller==6.3.0
+

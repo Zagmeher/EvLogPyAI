@@ -1,0 +1,187 @@
+{
+  "name": "EvLogPyAI Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evlogpyai",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "evlogpyai-webhook"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sessionId-field",
+              "name": "sessionId",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "text-field",
+              "name": "text",
+              "value": "=TITOLO: {{ $json.title }}\n\nDESCRIZIONE: {{ $json.description }}\n\nCATEGORIA: {{ $json.category }}\n\nTOTALE LOG: {{ String($json.total_logs) }}\n\n=== LOG EVENTI ===\n\n{{ ($json.logs || []).map((log, i) => \"Evento #\" + (i+1) + \"\\nTimestamp: \" + log.timestamp + \"\\nSource: \" + log.source + \"\\nEvent ID: \" + String(log.event_id) + \"\\nType: \" + log.type + \"\\nMessage: \" + log.message + \"\\n\\n\").join(\"\") }}\n\nAnalizza questi log e fornisci diagnosi, cause e soluzioni in italiano.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "edit-fields-node",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "llama2",
+          "cachedResultName": "llama2"
+        },
+        "options": {}
+      },
+      "id": "ollama-model-node",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [650, 450],
+      "credentials": {
+        "ollamaApi": {
+          "id": "ollama-credential",
+          "name": "Ollama API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "id": "memory-node",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [650, 550]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "ai-agent-node",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.callback_url }}",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "output",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-request-node",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2026-02-03T12:00:00.000Z",
+      "updatedAt": "2026-02-03T12:00:00.000Z",
+      "id": "evlogpyai-tag",
+      "name": "EvLogPyAI"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-03T12:00:00.000Z",
+  "versionId": "evlogpyai-v1"
+}
