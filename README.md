@@ -266,20 +266,6 @@ EvLogPyAI/
 - Esegui EvLogPyAI come **Amministratore** (tasto destro → "Esegui come amministratore")
 - I log di Security richiedono privilegi elevati
 
----
-
-## 🤝 Contribuire
-
-I contributi sono benvenuti! Per contribuire:
-
-1. Fai un fork del repository
-2. Crea un branch per la tua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit delle modifiche (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Apri una Pull Request
-
----
-
 ## 📄 Licenza
 
 Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.
@@ -289,9 +275,8 @@ Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.
 ## 👤 Autore
 
 **Il Tuo Nome**
-- GitHub: [@tuousername](https://github.com/tuousername)
-- Email: tuaemail@example.com
-
+- GitHub: [@tuousername](https://github.com/Zagmeher
+- Email: info@angeloiandolo.it
 ---
 
 ## 🙏 Ringraziamenti
