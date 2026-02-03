@@ -275,7 +275,7 @@ Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.
 ## 👤 Autore
 
 **Il Tuo Nome**
-- GitHub: [@tuousername](https://github.com/Zagmeher
+- GitHub: https://github.com/Zagmeher
 - Email: info@angeloiandolo.it
 ---
 
