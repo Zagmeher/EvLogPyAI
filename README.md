@@ -1,8 +1,8 @@
-# EvLogPyAI 🤖
+# EvLogPyAI
 
-**Analisi Intelligente dei Log di Windows con AI**
+Applicazione Windows per estrarre log dal Visualizzatore Eventi, analizzarli con AI (Ollama) tramite N8N e generare un report HTML.
 
-EvLogPyAI è un'applicazione Windows che estrae automaticamente i log del Visualizzatore Eventi, li invia a un workflow N8N integrato con Ollama AI per l'analisi, e presenta i risultati in un report HTML dettagliato.
+Windows application to extract Event Viewer logs, analyze them with AI (Ollama) via N8N and generate an HTML report.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-green)
@@ -10,305 +10,145 @@ EvLogPyAI è un'applicazione Windows che estrae automaticamente i log del Visual
 
 ---
 
-## ⚡ Avvio Rapido - 3 Comandi
+## Requisiti / Requirements
 
-> 📖 **Guida dettagliata**: Vedi [QUICKSTART.md](QUICKSTART.md) per istruzioni passo-passo con screenshots
-
-**Per far funzionare tutto, esegui in ordine:**
-
-```powershell
-# 1. Avvia Docker (Ollama + N8N)
-.\start.ps1
-
-# 2. Importa workflow N8N manualmente
-# Vai su http://localhost:5678
-# Import from File → n8n/workflows/evlogpyai-workflow.json
-# IMPORTANTE: Attiva il workflow (toggle in alto a destra → VERDE)
-
-# 3. Avvia l'applicazione
-.\EvLogPyAI.exe
-# Oppure: python trigger.py
-```
-
-**🎯 Ordine di Esecuzione:**
-1. **start.ps1** → Avvia container Docker + scarica modello AI (~10 min prima volta)
-2. **N8N** → Importa e attiva workflow manualmente (vedi [n8n/workflows/README.md](n8n/workflows/README.md))
-3. **EvLogPyAI.exe** → Avvia l'applicazione principale
+- **Windows 10/11**
+- **Docker Desktop** — https://www.docker.com/products/docker-desktop/
+- **Python 3.10+** — https://www.python.org/downloads/
 
 ---
 
-## 📋 Caratteristiche
-
-✅ **Interfaccia Grafica Moderna** - GUI intuitiva con CustomTkinter  
-✅ **Estrazione Log Windows** - Accesso diretto al Visualizzatore Eventi  
-✅ **Analisi AI Automatica** - Ollama analizza errori e propone soluzioni  
-✅ **Report HTML Formattati** - Output professionale con stile dark theme  
-✅ **Workflow N8N Integrato** - Automazione completa del processo  
-✅ **Callback Asincrono** - Non blocca l'applicazione durante l'analisi  
-
----
-
-## 🚀 Installazione Completa
-
-### Prerequisiti
-
-- **Windows 10/11** (per accesso ai log di Windows)
-- **Docker Desktop** installato e avviato
-- **4GB RAM** disponibili per Ollama
-
-### Installazione
-
-#### Opzione 1: Eseguibile Pre-compilato (Consigliato)
-
-1. Scarica l'ultima release da [GitHub Releases](https://github.com/zagmeher/EvLogPyAI/releases)
-2. Estrai l'archivio in una cartella
-3. Avvia Docker Desktop
-4. Esegui lo script di avvio automatico:
+## Setup Automatico / Automatic Setup
 
 ```powershell
-.\start.ps1
-```
-
-Questo script:
-- ✅ Verifica che Docker sia attivo
-- ✅ Avvia container Ollama e N8N
-- ✅ Scarica automaticamente il modello AI (llama2)
-- ✅ Apre N8N nel browser per configurazione
-
-5. **IMPORTANTE**: Importa il workflow N8N:
-   - Il browser si apre automaticamente su http://localhost:5678
-   - Clicca su "Import from File"
-   - Seleziona: `n8n/workflows/evlogpyai-workflow.json`
-   - **ATTIVA** il workflow (toggle in alto a destra deve essere VERDE)
-
-6. Lancia `EvLogPyAI.exe`
-
-#### Opzione 2: Da Codice Sorgente
-
-```powershell
-# Clona il repository
-git clone https://github.com/zagmeher/EvLogPyAI.git
+git clone https://github.com/YOUR_USERNAME/EvLogPyAI.git
 cd EvLogPyAI
-
-# Installa dipendenze Python
-pip install -r requirements.txt
-
-# Avvia Docker
-docker-compose up -d
-
-# Scarica modello Ollama
-docker exec -it evlogpyai-ollama ollama pull llama2
-
-# Importa workflow N8N (come sopra)
-
-# Esegui l'applicazione
-python trigger.py
+.\setup-evlogpyai.ps1
 ```
+
+Lo script installa Python (se mancante), crea l'ambiente virtuale, avvia Docker e scarica il modello AI.
+The script installs Python (if missing), creates a virtual environment, starts Docker and downloads the AI model.
 
 ---
 
-## 📖 Utilizzo
+## Guida Passo-Passo / Step-by-Step Guide
 
-### 1. Avvia l'Applicazione
-
-Doppio click su `EvLogPyAI.exe` o esegui `python trigger.py`
-
-### 2. Compila il Form
-
-- **Titolo Problema**: Breve descrizione (es. "Errore Secure Boot")
-- **Categoria Log**: Seleziona da Application, Security, System, Setup, ForwardedEvents
-- **Numero Righe**: Quanti eventi estrarre (es. 50)
-- **Descrizione Issue**: Dettagli del problema riscontrato
-
-### 3. Estrai i Log
-
-Clicca su **"📥 Estrai Log"**. L'applicazione:
-1. Legge i log dal Visualizzatore Eventi di Windows
-2. Salva un file `.txt` sul Desktop
-3. Avvia un server callback sulla porta 5050
-4. Invia i dati a N8N
-
-### 4. Attendi l'Analisi
-
-- N8N riceve i dati e li formatta
-- Ollama AI analizza i log (può richiedere 2-5 minuti)
-- Il risultato viene inviato al callback di EvLogPyAI
-
-### 5. Visualizza il Report
-
-Il browser si apre automaticamente con un report HTML contenente:
-- Diagnosi del problema
-- Analisi degli errori più gravi
-- Cause identificate
-- Soluzioni proposte
-
----
-
-## 🏗️ Architettura
-
-```
-┌─────────────────┐
-│   EvLogPyAI     │ (Windows App)
-│   trigger.py    │
-└────────┬────────┘
-         │ POST /webhook
-         ▼
-┌─────────────────┐
-│   N8N Webhook   │ (Docker Container)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Edit Fields    │ (Formattazione)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   AI Agent      │ (Ollama LLama2)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  HTTP Request   │ → POST http://host.docker.internal:5050/callback
-└─────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Callback Server │ (trigger.py:5050)
-│  HTML Generator │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│     Browser     │ (Report HTML)
-└─────────────────┘
-```
-
----
-
-## 🛠️ Configurazione Avanzata
-
-### Cambio Porta Callback
-
-Modifica in `trigger.py`:
-
-```python
-CALLBACK_PORT = 5050  # Cambia in una porta libera
-```
-
-Aggiorna anche l'URL in N8N nel nodo HTTP Request.
-
-### Cambio Modello Ollama
-
-Scarica un modello diverso:
+### Passo 1 — Avvia i Container Docker / Start Docker Containers
 
 ```powershell
-docker exec -it evlogpyai-ollama ollama pull mistral
+.\start.ps1
 ```
 
-Modifica il workflow N8N per usare il nuovo modello.
+Avvia Ollama (porta 11434) e N8N (porta 5678). La prima esecuzione scarica il modello llama2 (~4GB, 5-15 min).
+Starts Ollama (port 11434) and N8N (port 5678). First run downloads the llama2 model (~4GB, 5-15 min).
 
-### Timeout Analisi AI
+### Passo 2 — Importa il Workflow N8N / Import the N8N Workflow
 
-Modifica in `trigger.py` (riga ~1237):
+1. Apri / Open **http://localhost:5678**
+2. Crea un account locale / Create a local account (solo al primo accesso / first time only)
+3. Clicca **"Add workflow"** poi l'icona **⋮** in alto a destra → **"Import from File"**
+   Click **"Add workflow"** then the **⋮** icon top-right → **"Import from File"**
+4. Seleziona / Select `n8n/workflows/evlogpyai-workflow.json`
+5. Apri il nodo **"Ollama Chat Model"** dentro l'AI Agent:
+   Open the **"Ollama Chat Model"** node inside the AI Agent:
+   - Clicca **"Create New Credential"** / Click **"Create New Credential"**
+   - **Base URL**: `http://ollama:11434`
+   - Salva / Save
+6. **Attiva il workflow** — toggle in alto a destra → deve essere **VERDE**
+   **Activate the workflow** — toggle top-right → must be **GREEN**
+7. Salva / Save (**Ctrl+S**)
 
-```python
-timeout=300  # 300 secondi = 5 minuti
+### Passo 3 — Avvia l'Applicazione / Start the Application
+
+```powershell
+# Con ambiente virtuale / With virtual environment
+.\.venv\Scripts\Activate.ps1
+python trigger.py
+
+# Oppure con il launcher / Or with the launcher
+.\EvLogPyAI.bat
+```
+
+### Passo 4 — Usa EvLogPyAI / Use EvLogPyAI
+
+1. Compila il form: titolo, categoria log, numero righe, descrizione
+   Fill the form: title, log category, number of rows, description
+2. Clicca **"Estrai Log"** / Click **"Extract Logs"**
+3. Attendi l'analisi AI (2-5 minuti) / Wait for AI analysis (2-5 min)
+4. Il browser si apre con il report HTML / The browser opens with the HTML report
+
+### Stop — Ferma tutto / Stop everything
+
+```powershell
+.\stop.ps1
 ```
 
 ---
 
-## 📁 Struttura Progetto
+## Architettura / Architecture
+
+```
+trigger.py (Windows)
+    │
+    ├── 1. Estrae log dal Visualizzatore Eventi
+    │      Extracts logs from Windows Event Viewer
+    │
+    ├── 2. POST http://localhost:5678/webhook/evlogpyai
+    │      Invia log + callback_url a N8N
+    │      Sends logs + callback_url to N8N
+    │
+    │   [Docker Container: N8N]
+    │   ├── Webhook riceve i dati / Webhook receives data
+    │   ├── Edit Fields formatta il prompt / Edit Fields formats prompt
+    │   ├── AI Agent → Ollama (llama2) analizza / analyzes
+    │   └── HTTP Request → POST http://host.docker.internal:5050/callback
+    │
+    └── 3. Riceve risposta → genera HTML → apre browser
+           Receives response → generates HTML → opens browser
+```
+
+---
+
+## Struttura File / File Structure
 
 ```
 EvLogPyAI/
-├── trigger.py                  # Applicazione principale
-├── requirements.txt            # Dipendenze Python
-├── setup.py                    # Script build .exe
-├── docker-compose.yml          # Configurazione Docker
-├── README.md                   # Questo file
-├── LICENSE                     # Licenza MIT
-├── .gitignore                  # File da ignorare in Git
-├── n8n/
-│   └── workflows/
-│       └── evlogpyai-workflow.json  # Workflow N8N
+├── trigger.py                  # App principale / Main app
+├── docker-compose.yml          # Ollama + N8N containers
+├── requirements.txt            # Dipendenze Python / Python dependencies
+├── setup-evlogpyai.ps1         # Setup automatico / Automatic setup
+├── start.ps1                   # Avvia containers / Start containers
+├── stop.ps1                    # Ferma containers / Stop containers
+├── build.ps1                   # Build .exe con PyInstaller
+├── n8n/workflows/
+│   └── evlogpyai-workflow.json # Workflow N8N da importare / N8N workflow to import
 └── docs/
-    ├── INSTALLATION.md         # Guida installazione dettagliata
-    └── screenshots/            # Screenshot applicazione
+    └── INSTALLATION.md         # Guida dettagliata / Detailed guide
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## Porte Utilizzate / Ports Used
 
-### Errore "ECONNREFUSED" da N8N
-
-**Problema**: N8N non riesce a connettersi al callback server.
-
-**Soluzione**:
-1. Verifica che EvLogPyAI sia in esecuzione
-2. Verifica di aver cliccato "Estrai Log" (avvia il callback server)
-3. Controlla che l'URL in N8N sia: `={{ $('Webhook').item.json.callback_url }}`
-
-### Ollama Lento
-
-**Problema**: L'analisi richiede troppo tempo.
-
-**Soluzione**:
-- Usa un modello più piccolo (es. `ollama pull phi`)
-- Aumenta RAM allocata a Docker (Settings → Resources → Memory: 8GB)
-
-### Log Non Trovati
-
-**Problema**: "Nessun log trovato" dopo l'estrazione.
-
-**Soluzione**:
-- Esegui EvLogPyAI come **Amministratore** (tasto destro → "Esegui come amministratore")
-- I log di Security richiedono privilegi elevati
+| Servizio / Service | Porta / Port | URL                          |
+|--------------------|--------------|------------------------------|
+| N8N                | 5678         | http://localhost:5678        |
+| Ollama             | 11434        | http://localhost:11434       |
+| Callback Server    | 5050         | http://localhost:5050        |
 
 ---
 
-## 🤝 Contribuire
+## Risoluzione Problemi / Troubleshooting
 
-I contributi sono benvenuti! Per contribuire:
-
-1. Fai un fork del repository
-2. Crea un branch per la tua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit delle modifiche (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Apri una Pull Request
-
----
-
-## 📄 Licenza
-
-Distribuito sotto licenza MIT. Vedi `LICENSE` per maggiori informazioni.
+| Problema / Problem | Soluzione / Solution |
+|--------------------|----------------------|
+| Webhook 404 | Il workflow N8N non è attivo. Attiva il toggle verde. / The N8N workflow is not active. Enable the green toggle. |
+| "fetch failed" nell'AI Agent | Credenziali Ollama mancanti. Configura Base URL: `http://ollama:11434` / Missing Ollama credentials. Set Base URL: `http://ollama:11434` |
+| Timeout callback | Firewall blocca porta 5050. Aggiungi regola: `New-NetFirewallRule -DisplayName "EvLogPyAI" -Direction Inbound -LocalPort 5050 -Protocol TCP -Action Allow` |
+| Container non partono | Verifica Docker Desktop sia avviato: `docker ps` / Check Docker Desktop is running: `docker ps` |
 
 ---
 
-## 👤 Autore
+## Licenza / License
 
-**Il Tuo Nome**
-- GitHub: [@tuousername](https://github.com/tuousername)
-- Email: tuaemail@example.com
-
----
-
-## 🙏 Ringraziamenti
-
-- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - GUI moderna per Python
-- [Ollama](https://ollama.ai/) - Modelli AI locali
-- [N8N](https://n8n.io/) - Workflow automation
-- [PyWin32](https://github.com/mhammond/pywin32) - Accesso API Windows
-
----
-
-## 📊 Statistiche
-
-![Stars](https://img.shields.io/github/stars/tuousername/EvLogPyAI?style=social)
-![Forks](https://img.shields.io/github/forks/tuousername/EvLogPyAI?style=social)
-![Issues](https://img.shields.io/github/issues/tuousername/EvLogPyAI)
-
----
-
-**Fatto con ❤️ per semplificare l'analisi dei log di Windows**
+MIT

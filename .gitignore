@@ -59,3 +59,4 @@ temp/
 # Build artifacts
 *.exe
 *.msi
+EvLogPyAI.bat
